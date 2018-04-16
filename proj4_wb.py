@@ -631,8 +631,48 @@ for i in lst_DZ:
 # Part 6: Implement logic to process user commands
 
 # this is where to decide which command runs according to the user input
-def process_command(command):
+# def process_command(command):
+#     pass
+
+def print_command_main():
+    print("a. Search for Economic Data of countries.")
+    print("b. Search for Financial Time news of a country.")
+    print("c. Search for Flicker photos of a country.")
+    print("Please enter a/b/c or help/exit to choose the function you want to use.")
+
+def print_command_2():
+    print('Welcome to search for the economic data from the World Bank database.')
+    print('You can see two types of charts of economic data here.')
+    print('The first type is line chart. The second type is world map.')
+    print('The economic data provided here are three: GDP/GNI/GDP_growth.')
+    print('The data provided here are between 1995 to 2015.')
+
+
+def command_econ():
+    first_enter = True
+    if first_enter == True:
+        print_command_2()
+        first_enter = False
+
+    response_econ = input('Enter a command: ')
+
+
+
+    response_alpha2 = input('Enter a 2-letter code of a country: ')
+    response_title = input('Enter a data type(GDP/GNI/GDP_growth): ')
+
+    #get_data_for_one(alpha2, title)
+    #plot_for_one(result_dic)
+
+    #get_data_for_all(title = 'GDP', year = 2000)
+    #plot_for_all(result_dic)
+
     pass
+def command_ft():
+    pass
+def command_flicker():
+    pass
+
 
 def load_help_text():
     with open('help.txt') as f:
@@ -641,20 +681,49 @@ def load_help_text():
 ########################################################################
 # Part 3: Implement interactive prompt. We've started for you!
 def interactive_prompt():
-    pass
-    # help_text = load_help_text()
-    # response = ''
-    # while response != 'exit':
-    #     response = input('Enter a command: ')
-    #     response = response.strip()
-    #
-    #     if response == 'exit':
-    #         print("bye")
-    #         break
-    #
-    #     if response == 'help':
-    #         print(help_text)
-    #         continue
+    first_enter = True
+    help_text = load_help_text()
+    response = ''
+
+    if first_enter == True:
+        print('Welcome to this program to search for economic data of countries!')
+        print('You can also find the latest news or Flicker photos of a country.')
+        print('If you have any question, please enter "help" to see more detailed info.')
+        print('If you want to leave, please enter "exit".')
+        print("Let's starts!")
+        print("===========================================================")
+        print_command_main()
+        first_enter = False
+
+
+    while response != 'exit':
+        response = input('Enter a command: ')
+        response = response.strip()
+        response = response.lower()
+
+        if response == 'exit':
+            print("bye")
+            break
+
+        if response == 'help':
+            print(help_text)
+            continue
+
+        if response == 'a':
+            command_econ()
+            continue
+        if response == 'b':
+            command_ft()
+            continue
+        if response == 'c':
+            command_flicker()
+            continue
+
+        else:
+            print('Invalid input. Please enter the correct command.')
+            print_command_main()
+            continue
+
 
 # data of country_code
 # http://www.nationsonline.org/oneworld/country_code_list.htm
