@@ -1,4 +1,4 @@
-from secrets import google_places_key
+from secrets import *
 import plotly.plotly as py
 import plotly.graph_objs as go
 from bs4 import BeautifulSoup
@@ -187,7 +187,6 @@ def populate_db():
     #---------------------------------------------
     # step 2: Update the countries data with more information(incomelevel, longitude and latitude)
     # get a list of Alpha2 of countries, and call the function 'get_GPS_of_country()' to get the data.
-
     lst_a2 = []
     lst_a2_gps = [] # where to save the result from the function "get_GPS_of_country()"
     lst_a2_gdp = [] # where to save the result from the function "get_GDP_of_country()"
@@ -337,7 +336,7 @@ def populate_db():
 # define functions that can create different charts by using Plotly
 
 #<<<< get the targeted data of a country from db >
-def get_data_for_one(alpha2 = 'AF', title = 'GDP'):
+def get_data_for_one(alpha2, title):
     # params: country code 'Alpha2' and the 'title' of data
     # return: result_dic
     result_dic = {}
@@ -378,9 +377,11 @@ def plot_for_one(result_dic):
     if dic_title == 'GDP_growth':
         f_name = 'GDP_growth' + ' of ' + dic_name
         full_title = 'GDP growth (annual %)' + ' of ' + dic_name
-    else:
+    if dic_title == 'GDP':
         f_name = 'GDP' + ' of ' + dic_name
         full_title = 'GDP (constant 2010 US$)' + ' of ' + dic_name
+    else:
+        return ("Error in plotting for one country")
 
     lst_year = []
     lst_value = []
@@ -408,7 +409,7 @@ def plot_for_one(result_dic):
 
     fig = dict(data=data, layout=layout)
     py.plot(fig, filename = f_name)
-#plot_for_one(get_data_for_one('CA', 'GDP_growth'))
+#plot_for_one(get_data_for_one('TR', 'GNI'))
 
 #----------------------------------------
 #<<<< get the targeted data in a year of all country from db >
@@ -499,10 +500,135 @@ def plot_for_all(result_dic):
 
     fig = dict( data=data, layout=layout )
     py.plot( fig, validate=False, filename=full_title )
-#plot_for_all(get_data_for_all(title = 'GNI'))
+#plot_for_all(get_data_for_all(title = 'GNI', year = 2015))
 
 #[Part 4]######################################################################
-# Part 4: Implement logic to process user commands
+# perform web scraping from the Financial Times website
+# get the recent headline of news of a country
+
+def get_FTimes_page(Alpha2):
+    # change the two-letter Alpha2 to the country name
+    conn = sqlite3.connect(DBNAME)
+    cur = conn.cursor()
+    params = (Alpha2 ,)
+    statement = '''
+        SELECT EnglishName
+        FROM Countries
+        WHERE Alpha2 = ?
+    '''
+    cur.execute(statement, params)
+    result_name = cur.fetchone()[0]
+    # ---------financial time web scraping
+    baseurl = 'https://www.ft.com'
+    catalog_url = baseurl + '/search'
+    query = {'q': result_name} # use the country name to search for a news
+    page_text = requests.get(catalog_url, params = query).text
+
+    page_soup = BeautifulSoup(page_text, 'html.parser')
+    # print(page_soup.prettify().encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
+
+    content_headline = page_soup.find_all(class_='o-teaser__heading')
+    # print(len(content_headline))
+
+    num = 1
+    for tr in content_headline[0:10]: # only get top 10 news
+        details_url = tr.find('a')['href']
+        print(num, '.', tr.text.strip())
+        print(baseurl + details_url)
+        num += 1
+        print('-'*20)
+    # ---------financial time web scraping
+#get_FTimes_page('US')
+
+#[Part 5]######################################################################
+# define a function for make requests from flicker API
+# to get the photos from Flicker of a country
+
+# get the ids of photos that contains the country name as tag
+def  get_flickr_data(Alpha2, tag_for_search = 'National flag'):
+    lst_photo_id = []
+    # change the two-letter Alpha2 to the country name
+    conn = sqlite3.connect(DBNAME)
+    cur = conn.cursor()
+    params = (Alpha2 ,)
+    statement = '''
+        SELECT EnglishName
+        FROM Countries
+        WHERE Alpha2 = ?
+    '''
+    cur.execute(statement, params)
+    tag = cur.fetchone()[0]
+
+    baseurl = "https://api.flickr.com/services/rest/"
+    params_diction = {}
+    params_diction["api_key"] = FLICKR_KEY
+    params_diction["tags"] = tag + ', ' + tag_for_search
+    params_diction["per_page"] = 10
+    params_diction["tag_mode"] = "all"
+    params_diction["method"] = "flickr.photos.search"
+    params_diction["format"] = "json"
+
+    unique_ident = "https://api.flickr.com/services/rest/" + tag
+
+    if unique_ident in CACHE_DICTION:
+        print("Getting cached data...")
+        result = CACHE_DICTION[unique_ident]
+    else:
+        print("Making a request for new data...")
+        # Make the request and cache the new data
+        resp = requests.get(baseurl, params_diction)
+        flickr_text = resp.text
+        flickr_text_fixed = flickr_text[14:-1]
+        CACHE_DICTION[unique_ident] = json.loads(flickr_text_fixed)
+
+        dumped_json_cache= json.dumps(CACHE_DICTION)
+        fw = open(CACHE_FNAME,"w")
+        fw.write(dumped_json_cache)
+        fw.close()
+        result = CACHE_DICTION[unique_ident]
+
+    for i in result['photos']['photo']:
+        lst_photo_id.append(i['id'])
+    return(lst_photo_id)
+
+# use the id of a photo to search for its URL
+def  get_flickr_photo_info(id_num, tag):
+    baseurl = "https://api.flickr.com/services/rest/"
+    params_diction = {}
+    params_diction["api_key"] = FLICKR_KEY
+    params_diction["photo_id"] = id_num
+    params_diction["method"] = "flickr.photos.getInfo"
+    params_diction["format"] = "json"
+
+    unique_ident = baseurl + id_num + tag
+
+    if unique_ident in CACHE_DICTION:
+        #print("Getting cached data...")
+        result =  CACHE_DICTION[unique_ident]
+    else:
+        print("Making a request for new data...")
+        # Make the request and cache the new data
+        resp = requests.get(baseurl, params_diction)
+        flickr_text = resp.text
+        flickr_text_fixed = flickr_text[14:-1]
+        CACHE_DICTION[unique_ident] = json.loads(flickr_text_fixed)
+
+        dumped_json_cache= json.dumps(CACHE_DICTION)
+        fw = open(CACHE_FNAME,"w")
+        fw.write(dumped_json_cache)
+        fw.close()
+        result =  CACHE_DICTION[unique_ident]
+    photo_url = result['photo']['urls']['url'][0]['_content']
+    return(photo_url)
+
+
+lst_DZ = get_flickr_data('DZ')
+for i in lst_DZ:
+    print(get_flickr_photo_info(i, 'National flag'))
+
+
+#[Part 6]######################################################################
+# Part 6: Implement logic to process user commands
 
 # this is where to decide which command runs according to the user input
 def process_command(command):
@@ -539,4 +665,4 @@ if __name__=="__main__":
     pass
     # create_db()
     # populate_db()
-    #interactive_prompt()
+    # interactive_prompt()
