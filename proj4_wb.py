@@ -2,6 +2,7 @@ from secrets import *
 import plotly.plotly as py
 import plotly.graph_objs as go
 from bs4 import BeautifulSoup
+import webbrowser
 import requests
 import sqlite3
 import csv
@@ -622,9 +623,9 @@ def  get_flickr_photo_info(id_num, tag):
     return(photo_url)
 
 
-lst_DZ = get_flickr_data('DZ')
-for i in lst_DZ:
-    print(get_flickr_photo_info(i, 'National flag'))
+# lst_DZ = get_flickr_data('DZ')
+# for i in lst_DZ:
+#     print(get_flickr_photo_info(i, 'National flag'))
 
 
 #[Part 6]######################################################################
@@ -634,104 +635,164 @@ for i in lst_DZ:
 # def process_command(command):
 #     pass
 
-def print_command_main():
-    print("a. Search for Economic Data of countries.")
-    print("b. Search for Financial Time news of a country.")
-    print("c. Search for Flicker photos of a country.")
-    print("Please enter a/b/c or help/exit to choose the function you want to use.")
-
-def print_command_2():
-    print('Welcome to search for the economic data from the World Bank database.')
-    print('You can see two types of charts of economic data here.')
-    print('The first type is line chart. The second type is world map.')
-    print('The economic data provided here are three: GDP/GNI/GDP_growth.')
-    print('The data provided here are between 1995 to 2015.')
-
-
-def command_econ():
-    first_enter = True
-    if first_enter == True:
-        print_command_2()
-        first_enter = False
-
-    response_econ = input('Enter a command: ')
-
-
-
-    response_alpha2 = input('Enter a 2-letter code of a country: ')
-    response_title = input('Enter a data type(GDP/GNI/GDP_growth): ')
-
-    #get_data_for_one(alpha2, title)
-    #plot_for_one(result_dic)
-
-    #get_data_for_all(title = 'GDP', year = 2000)
-    #plot_for_all(result_dic)
-
-    pass
-def command_ft():
-    pass
-def command_flicker():
-    pass
-
+def open_web_code():
+    webbrowser.open_new('https://www.worldatlas.com/aatlas/ctycodes.htm')
 
 def load_help_text():
     with open('help.txt') as f:
         return f.read()
 
-########################################################################
-# Part 3: Implement interactive prompt. We've started for you!
+def print_command_main():
+    print("============[Home]============")
+    print("a. Search for Economic Data of countries.")
+    print("b. Search for Financial Time news of a country.")
+    print("c. Search for Flicker photos of a country.")
+    print(' ')
+    print("Please enter a/b/c/code/help/exit to choose the function you want to use.")
+
+def print_command_2():
+    print(' ')
+    print("==========[Economic charts]===========")
+    print('Welcome to search for the economic data from the World Bank database.')
+    print('-'*10)
+    print('You can see two types of charts of economic data here.')
+    print('The first type is line chart. The second type is world map.')
+    print('-'*10)
+    print('The economic data are three types: GDP/GNI/GDP_growth.')
+    print("The available data starts from 1995 to 2015. Some countries don't have complete data.")
+    print('-'*10)
+    print('The command "back" allows you to go back to [Home].')
+    print('If you have any question, please enter "help" to see more detailed info.')
+    print(' ')
+
+
+def command_econ():
+    response_econ = ''
+    first_enter = True
+    if first_enter == True:
+        print_command_2()
+        first_enter = False
+
+    while response_econ != 'back':
+        print('-'*20)
+        print("==========[Economic charts]===========")
+        print("a. Get a line chart of a country's GDP/GNI/GDP_growth from 1995 to 2015.")
+        print("b. Get the world map of GDP/GNI/GDP_growth of all countries at a specific year.")
+        print(' ')
+        print("Please enter a/b/code/help/back to choose the function you want to use.")
+        print(' ')
+        response_econ = input('Enter a command: ')
+        print(' ')
+
+        if response_econ == "code":
+            open_web_code()
+            continue
+
+        if response_econ == 'help': # open the help.txt
+            print(load_help_text())
+            continue
+
+        if response_econ == "back":
+            print ("Go back to home page.")
+            print(' ')
+            break
+
+        if response_econ == "a":
+            continue
+
+        if response_econ == "b":
+            continue
+
+        else:
+            print('<<Invalid input. Please enter the correct command.>>')
+            print(' ')
+            continue
+
+    # a
+    #response_alpha2 = input('Enter a 2-letter code of a country: ')
+    #response_title = input('Enter a data type(GDP/GNI/GDP_growth): ')
+
+    #get_data_for_one(alpha2, title)
+    #plot_for_one(result_dic)
+
+    # b
+    #response_title = input('Enter a data type(GDP/GNI/GDP_growth): ')
+    #response_year = input('Enter a 4 digit year (between 1995 to 2015): ')
+    #get_data_for_all(title = 'GDP', year = 2000)
+    #plot_for_all(result_dic)
+
+
+
+    pass
+
+def command_ft():
+    pass
+
+def command_flicker():
+    pass
+
+
+#[Part 7]######################################################################
+# Part 7: Implement interactive prompt.
+# here is the home layer of the code
+# the user have six choices here: a/b/c/code/help/exit
 def interactive_prompt():
     first_enter = True
     help_text = load_help_text()
     response = ''
 
     if first_enter == True:
-        print('Welcome to this program to search for economic data of countries!')
+        print(' ')
+        print('Welcome to this program to search for economic data of different countries!')
         print('You can also find the latest news or Flicker photos of a country.')
-        print('If you have any question, please enter "help" to see more detailed info.')
+        print(' ')
+        print('If you have any question, please enter "help" to see detailed info.')
+        print('If you want to search 2-letter country code, please enter "code".')
         print('If you want to leave, please enter "exit".')
+        print(' ')
         print("Let's starts!")
-        print("===========================================================")
-        print_command_main()
         first_enter = False
 
 
     while response != 'exit':
+        print_command_main()
+        print("="*20)
         response = input('Enter a command: ')
+        print(" "*20)
         response = response.strip()
         response = response.lower()
 
-        if response == 'exit':
+        if response == 'exit': # leave the program
             print("bye")
             break
 
-        if response == 'help':
-            print(help_text)
+        if response == 'help': # open the help.txt
+            print(load_help_text())
             continue
 
+        if response == 'code': # open the website to search for country code
+            print('Open the website to search for a 2-letter country code.')
+            open_web_code()
+
+        # choose one of the three functions and call it
         if response == 'a':
-            command_econ()
+            command_econ() # fucntion to plot economic data
             continue
         if response == 'b':
-            command_ft()
+            command_ft() # fucntion for webscraping
             continue
         if response == 'c':
-            command_flicker()
+            command_flicker() # search for photos in flicker
             continue
 
-        else:
-            print('Invalid input. Please enter the correct command.')
-            print_command_main()
+        else: # invalid input
+            print('<<Invalid input. Please enter the correct command.>>')
+            print(' ')
             continue
-
-
-# data of country_code
-# http://www.nationsonline.org/oneworld/country_code_list.htm
 
 
 # Make sure nothing runs or prints out when this file is run as a module
 if __name__=="__main__":
-    pass
     # create_db()
     # populate_db()
-    # interactive_prompt()
+    interactive_prompt()
