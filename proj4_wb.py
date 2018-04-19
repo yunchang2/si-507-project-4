@@ -14,6 +14,7 @@ DBNAME = 'world_bank.db' # SQLite database
 COUNTRIESJSON = 'countries.json' # json data contains countries names and information
 CACHE_FNAME = 'WorldBank_data.json' # store the cache files
 
+
 #[Part 1]######################################################################
 # Use cache to avoid sent the same requests many times.
 # define functions of API requests that will be used later
@@ -26,16 +27,17 @@ try:
 except:
     CACHE_DICTION = {}
 
+
 # define a function for make requests with caching
 def result_from_cache(full_url, params_diction):
     unique_ident = full_url
 
     if unique_ident in CACHE_DICTION:
-        print("Getting cached data...")
+        #print("Getting cached data...")
         return CACHE_DICTION[unique_ident]
 
     else:
-        print("Making a request for new data...")
+        #print("Making a request for new data...")
     # Make the request and cache the new data
         response = requests.get(full_url, params_diction)
         CACHE_DICTION[unique_ident] = json.loads(response.text)
@@ -365,28 +367,34 @@ def get_data_for_one(alpha2, title):
     result_dic['value'] = result_lst
 
     return result_dic
-#print(get_data_for_one())
+#print(get_data_for_one('CA','GDP'))
 
 #<<<<< plot a line chart of a country >
 def plot_for_one(result_dic):
+    dic_value = result_dic['value']
     dic_title = result_dic['title']
     dic_name = result_dic['Name']
 
     if dic_title == 'GNI':
         f_name = 'GNI' + ' of ' + dic_name
         full_title = 'Adjusted net national income per capita (constant 2010 US$)' + ' of ' + dic_name
-    if dic_title == 'GDP_growth':
+
+    elif dic_title == 'GDP_growth':
         f_name = 'GDP_growth' + ' of ' + dic_name
         full_title = 'GDP growth (annual %)' + ' of ' + dic_name
-    if dic_title == 'GDP':
+
+    elif dic_title == 'GDP':
         f_name = 'GDP' + ' of ' + dic_name
         full_title = 'GDP (constant 2010 US$)' + ' of ' + dic_name
+
     else:
         return ("Error in plotting for one country")
 
     lst_year = []
     lst_value = []
-    for i in result_dic['value']:
+
+
+    for i in dic_value:
         lst_year.append(i[0])
         lst_value.append(i[1])
 
@@ -409,8 +417,10 @@ def plot_for_one(result_dic):
               )
 
     fig = dict(data=data, layout=layout)
-    py.plot(fig, filename = f_name)
-#plot_for_one(get_data_for_one('TR', 'GNI'))
+    py.plot(fig, filename = dic_title)
+
+# result = get_data_for_one('EG', 'GNI')
+# plot_for_one(result)
 
 #----------------------------------------
 #<<<< get the targeted data in a year of all country from db >
@@ -461,7 +471,7 @@ def plot_for_all(result_dic):
             lst_value.append(round(lst[1],0))
             scale = 'k = thousand'
 
-        if title == 'GDP' :
+        elif title == 'GDP' :
             full_title = 'GDP (constant 2010 US$)'
             lst_value.append(round(lst[1]/1000000000,2))
             scale = 'Billion (k = thousand)'
@@ -572,10 +582,10 @@ def  get_flickr_data(Alpha2, tag_for_search = 'National flag'):
     unique_ident = "https://api.flickr.com/services/rest/" + tag
 
     if unique_ident in CACHE_DICTION:
-        print("Getting cached data...")
+        #print("Getting cached data...")
         result = CACHE_DICTION[unique_ident]
     else:
-        print("Making a request for new data...")
+        #print("Making a request for new data...")
         # Make the request and cache the new data
         resp = requests.get(baseurl, params_diction)
         flickr_text = resp.text
@@ -607,7 +617,7 @@ def  get_flickr_photo_info(id_num, tag):
         #print("Getting cached data...")
         result =  CACHE_DICTION[unique_ident]
     else:
-        print("Making a request for new data...")
+        #print("Making a request for new data...")
         # Make the request and cache the new data
         resp = requests.get(baseurl, params_diction)
         flickr_text = resp.text
@@ -622,18 +632,33 @@ def  get_flickr_photo_info(id_num, tag):
     photo_url = result['photo']['urls']['url'][0]['_content']
     return(photo_url)
 
-
-# lst_DZ = get_flickr_data('DZ')
-# for i in lst_DZ:
-#     print(get_flickr_photo_info(i, 'National flag'))
+# lst_US = get_flickr_data('US')
+# for i in lst_US:
+#     print(get_flickr_photo_info(i, 'university of michigan'))
 
 
 #[Part 6]######################################################################
 # Part 6: Implement logic to process user commands
 
-# this is where to decide which command runs according to the user input
-# def process_command(command):
-#     pass
+#-------------the function for supporting the users
+
+def get_lst_a2(): # get a list contains the 2-letter alpha2 codes of all countries
+    lst_a2 = []
+    conn = sqlite3.connect(DBNAME)
+    cur = conn.cursor()
+
+    statement_alpha2 = """
+        SELECT Alpha2
+        FROM Countries
+    """
+    cur.execute(statement_alpha2) # get all strings of A2 of each country
+    conn.commit()
+
+    for row in cur:
+        A2 = row[0].lower()
+        lst_a2.append(A2)
+    conn.close()
+    return lst_a2
 
 def open_web_code():
     webbrowser.open_new('https://www.worldatlas.com/aatlas/ctycodes.htm')
@@ -642,6 +667,7 @@ def load_help_text():
     with open('help.txt') as f:
         return f.read()
 
+#-------------the function only print
 def print_command_main():
     print("============[Home]============")
     print("a. Search for Economic Data of countries.")
@@ -665,9 +691,37 @@ def print_command_2():
     print('If you have any question, please enter "help" to see more detailed info.')
     print(' ')
 
+def print_command_3():
+    print(' ')
+    print("==========[Financial times news search]===========")
+    print('Welcome to search for news of a coutry in Financial Times!')
+    print('-'*10)
+    print('You can search for latest ten news in FTimes website regarding to the country you want to look for.')
+    print('There is only one input for the search.')
+    print('-'*10)
+    print('Just enter a two-leter country code.')
+    print('-'*10)
+    print('Besides, the command "back" allows you to go back to [Home].')
+    print(' ')
 
+def print_command_4():
+    print(' ')
+    print("==========[Flicker Photo search]===========")
+    print('Welcome to search for the Photos in Flicker!')
+    print('-'*10)
+    print('You can search for ten photos of a country that have a tag you want.')
+    print('There are two user input for the search.')
+    print('-'*10)
+    print('First, enter a two-leter country code.')
+    print('Second, enter the tag you want for the photo. For example, you can enter "National Flag" as a tag.')
+    print('-'*10)
+    print('The command "back" allows you to go back to [Home].')
+    print(' ')
+
+#-------------the function for running the commands
 def command_econ():
     response_econ = ''
+    lst_a2 = get_lst_a2()
     first_enter = True
     if first_enter == True:
         print_command_2()
@@ -675,13 +729,16 @@ def command_econ():
 
     while response_econ != 'back':
         print('-'*20)
+        print(' ')
         print("==========[Economic charts]===========")
+        print(' ')
         print("a. Get a line chart of a country's GDP/GNI/GDP_growth from 1995 to 2015.")
-        print("b. Get the world map of GDP/GNI/GDP_growth of all countries at a specific year.")
+        print("b. Get the world map of GDP/GNI of all countries at a specific year.")
         print(' ')
         print("Please enter a/b/code/help/back to choose the function you want to use.")
         print(' ')
-        response_econ = input('Enter a command: ')
+        response_econ = input('Enter a command (a/b/code/help/back): ')
+        response_econ = response_econ.strip()
         print(' ')
 
         if response_econ == "code":
@@ -697,44 +754,178 @@ def command_econ():
             print(' ')
             break
 
+        #-------------------------------------------------------
+        # choose the function to plot Line chart for a country
         if response_econ == "a":
+
+            response_alpha2 = input('Enter a 2-letter code of a country: ')
+            response_alpha2 = response_alpha2.strip()
+            if response_alpha2.lower() not in lst_a2:
+                print(' ')
+                print('<<Invalid input. Please enter the correct command.>>')
+                print('<<Please check the 2-letter country code you enter is correct. >>')
+                continue
+
+            response_alpha2 = response_alpha2.upper()
+
+            response_title = input('Enter a data type(GDP/GNI/GDP_growth): ')
+            response_title = response_title.strip()
+            lst_title = ['GDP', 'GNI', 'GDP_growth']
+
+            if str(response_title) not in ['GDP', 'GNI', 'GDP_growth']:
+                print(' ')
+                print('<<Invalid input. Please enter the correct command.>>')
+                continue
+
+            try:
+                result_data = get_data_for_one(response_alpha2, response_title)
+                plot_for_one(result_data)
+
+            except:
+                print(' ')
+                print('<<The country you enter do not have data in the World Bank. >>')
+                print('<<Please enter another country code.>>')
+
             continue
 
+        #------------------------------------------------------
+        # choose the function to plot world map
+
         if response_econ == "b":
+            response_title = input('Enter a data type (GDP or GNI): ')
+            response_title = response_title.strip()
+
+            if str(response_title) not in ['GDP', 'GNI']:
+                print(' ')
+                print('<<Invalid input. Please enter the correct command.>>')
+                continue
+
+            start_year = 1995
+            lst_year = []
+            while start_year < 2016:
+                lst_year.append(start_year)
+                start_year += 1
+            #print(lst_year)
+
+            response_year = input('Enter a 4 digit year (between 1995 to 2015): ')
+            if int(response_year) not in lst_year:
+                print(' ')
+                print('<<Invalid input. Please enter the correct year between 1995 to 2015.>>')
+                continue
+
+            try:
+                result_data = get_data_for_all(response_title, response_year)
+                plot_for_all(result_data)
+
+            except:
+                print(' ')
+                print('<<The country you enter do not have data in the World Bank. >>')
+                print('<<Please enter another country code.>>')
+
             continue
 
         else:
+            print(' ')
             print('<<Invalid input. Please enter the correct command.>>')
             print(' ')
             continue
 
-    # a
-    #response_alpha2 = input('Enter a 2-letter code of a country: ')
-    #response_title = input('Enter a data type(GDP/GNI/GDP_growth): ')
-
-    #get_data_for_one(alpha2, title)
-    #plot_for_one(result_dic)
-
-    # b
-    #response_title = input('Enter a data type(GDP/GNI/GDP_growth): ')
-    #response_year = input('Enter a 4 digit year (between 1995 to 2015): ')
-    #get_data_for_all(title = 'GDP', year = 2000)
-    #plot_for_all(result_dic)
-
-
-
-    pass
-
 def command_ft():
-    pass
+    response_ft = ''
+    lst_a2 = get_lst_a2()
+    first_enter = True
+    if first_enter == True:
+        print_command_3()
+        first_enter = False
+
+    while response_ft != 'back':
+        print('-'*20)
+        print(' ')
+        print("==========[Financial times news search]===========")
+        print(' ')
+        print("Please enter 2-letter country code. ( or enter code/help/back for other selections.)")
+        print(' ')
+        response_ft = input('Enter a command: ')
+        print(' ')
+
+        if response_ft.lower() in lst_a2:
+            response_ft = response_ft.upper()
+            print(' ')
+            result = get_FTimes_page(response_ft)
+            print(result)
+            continue
+
+        if response_ft == "code":
+            open_web_code()
+            continue
+
+        if response_ft == 'help': # open the help.txt
+            print(load_help_text())
+            continue
+
+        if response_ft == "back":
+            print ("Go back to home page.")
+            print(' ')
+            break
+
+        else:
+            print('<<Invalid input. Please enter the correct command.>>')
+            print('<<Please also check the 2-letter country code you enter is correct. >>')
+            print(' ')
+            continue
 
 def command_flicker():
-    pass
+    response_flicker = ''
+    lst_a2 = get_lst_a2()
+    first_enter = True
+    if first_enter == True:
+        print_command_4()
+        first_enter = False
+
+    while response_flicker != 'back':
+        print('-'*20)
+        print("==========[Flicker photo search]===========")
+        print("Please enter 2-letter country code. ( or enter code/help/back for other selections.)")
+        print(' ')
+        response_flicker = input('Enter a command: ')
+        print(' ')
+        if response_flicker == "code":
+            open_web_code()
+            continue
+
+        if response_flicker == 'help': # open the help.txt
+            print(load_help_text())
+            continue
+
+        if response_flicker == "back":
+            print ("Go back to home page.")
+            print(' ')
+            break
+
+        if response_flicker.lower() in lst_a2:
+            num = 1
+            response_flicker = response_flicker.upper()
+            print(' ')
+            response_flicker_tag = input('Enter a tag for photo search: ')
+            print(' ')
+            lst_id = get_flickr_data(response_flicker, response_flicker_tag)
+            for i in lst_id:
+                print(str(num) + '. ' + get_flickr_photo_info(i, response_flicker_tag))
+                num += 1
+                # print the result url
+            continue
+
+        else:
+            print('<<Invalid input. Please enter the correct command.>>')
+            print('<<Please also check the 2-letter country code you enter is correct. >>')
+            print(' ')
+            continue
 
 
 #[Part 7]######################################################################
 # Part 7: Implement interactive prompt.
-# here is the home layer of the code
+# Where to decide which command runs according to the user input.
+# here is the home layer of the code.
 # the user have six choices here: a/b/c/code/help/exit
 def interactive_prompt():
     first_enter = True
@@ -791,8 +982,16 @@ def interactive_prompt():
             continue
 
 
-# Make sure nothing runs or prints out when this file is run as a module
 if __name__=="__main__":
-    # create_db()
-    # populate_db()
-    interactive_prompt()
+    user_input = input('Do you want to create a new database? Please reply "Yes" or "No": ' )
+    if user_input == 'Yes':
+        create_db()
+        populate_db()
+        interactive_prompt()
+
+    elif user_input == 'No':
+        interactive_prompt()
+
+    else:
+        print('<<Invalid input. Please enter the correct command.>>')
+        print('<<Please enter this program again!>>')

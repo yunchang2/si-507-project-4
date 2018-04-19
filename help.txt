@@ -1,77 +1,55 @@
 
-Commands available:
+Commands available for specific layers:
 
-bars
-	Description: Lists chocolate bars, according the specified parameters.
+[Home] --------------------
 
-	Options:
-		* sellcountry=<name>|sourcecountry=<name>|
-			sellregion=<name>|sourceregion=<geo_name> [default: none]
-		Description: Specifies a country or region within which to limit the
-		results, and also specifies whether to limit by the seller
-		(or manufacturer) or by the bean origin source.
+[a] -->	[Economic charts]
 
-		* ratings|cocoa [default: ratings]
-		Description: Specifies whether to sort by rating or cocoa percentage
-
-		* top=<limit>|bottom=<limit> [default: top=10]
-		Description: Specifies whether to list the top <limit> matches or the
-		bottom <limit> matches.
-
-companies
-	Description: Lists chocolate bars sellers according to the specified parameters.
-	Only companies that sell at least 4 different kinds of bars
-	are listed in results.
+	Description: Search for Economic Data of countries from the World Bank database.
 
 	Options:
-		* country=<name>|region=<name> [default: none]
-		Description: Specifies a country or region within which to limit the
-		results.
 
-		* ratings|cocoa|bars_sold [default: ratings]
-		Description: Specifies whether to sort by rating, cocoa percentage, or
-		the number of different types of bars sold
+	[a] *** Line chart
+	<Description>: Get a line chart of a country's GDP/GNI/GDP_growth from 1995 to 2015.
+	<User Input>: a 2-letter country code, data type (GDP/GNI/GDP_growth)
 
-		* top=<limit>|bottom=<limit> [default: top=10]
-		Description: Specifies whether to list the top <limit> matches or the
-		bottom <limit> matches.
 
-countries
-	Description: Lists countries according to specified parameters.
-	Only countries that sell/source at least 4 different kinds of bars
-	are listed in results.
+	[b] *** World map
+	<Description>: Get the world map of GDP/GNI of all countries at a specific year.
+	<User Input>: data type (GDP/GNI/GDP_growth), a 4 digit year (between 1995 to 2015)
 
-	Options:
-		* region=<name> [default: none]
-		Description: Specifies a region within which to limit the
-		results.
 
-		* sellers|sources [default: sellers]
-		Description: Specifies whether to select countries based sellers or bean
-		sources.
+[b] -->	[Financial times news search]
 
-		* ratings|cocoa|bars_sold [default: ratings]
-		Description: Specifies whether to sort by rating, cocoa percentage, or
-		the number of different types of bars sold
+	<Description>: You can search for latest ten news in FTimes website regarding to 
+	the country you want to look for.
+	
+	<User Input>: a 2-letter country code
 
-		* top=<limit>|bottom=<limit> [default: top=10]
-		Description: Specifies whether to list the top <limit> matches or the
-		bottom <limit> matches.
 
-regions
-	Description: Lists regions according to specified parameters.
-	Only regions that sell/source at least 4 different kinds of bars are
-	listed in results.
+[c] -->	[Flicker Photo search]
 
-	Options:
-		* sellers|sources [default: sellers]
-		Description: Specifies whether to select countries based sellers or bean
-		sources.
+	Description: You can search for ten photos of a country that have a tag 
+	you want.
 
-		* ratings|cocoa|bars_sold [default: ratings]
-		Description: Specifies whether to sort by rating, cocoa percentage, or
-		the number of different types of bars sold
+	<User Input>: a 2-letter country code, a tag for the photo
 
-		* top=<limit>|bottom=<limit> [default: top=10]
-		Description: Specifies whether to list the top <limit> matches or the
-		bottom <limit> matches.
+---------------------------------------------------
+
+Command available for all layers: 
+
+[code]
+	Description: Open a website that listing all countries names and their 2-letter 
+	Alpha2 code. This allows user to find the 2-letter country code of a specific 
+	country.
+
+
+[Help]
+	Description: Open the help.txt to see the description of the program
+
+[back]	
+	Description: Go back to home layer.
+
+[exit]
+	Description: Leave the program.
+
