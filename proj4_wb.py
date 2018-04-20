@@ -553,8 +553,8 @@ def get_FTimes_page(Alpha2):
 #get_FTimes_page('US')
 
 #[Part 5]######################################################################
-# define a function for make requests from flicker API
-# to get the photos from Flicker of a country
+# define a function for make requests from flickr API
+# to get the photos from Flickr of a country
 
 # get the ids of photos that contains the country name as tag
 def  get_flickr_data(Alpha2, tag_for_search = 'National flag'):
