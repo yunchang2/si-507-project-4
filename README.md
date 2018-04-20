@@ -68,46 +68,81 @@ Commands available for specific layers:
 Command available for all layers: 
 
 [code]
+
 	Description: Open a website that listing all countries names and their 2-letter 
 	Alpha2 code. This allows user to find the 2-letter country code of a specific 
 	country.
 
 
 [Help]
+
 	Description: Open the help.txt to see the description of the program
 
 [back]	
+
 	Description: Go back to home layer.
 
 [exit]
+
 	Description: Leave the program.
 
   
 #[How the function is constructed]#############################
  
 [Part 1]
+
 I built four functions to get data according to the Alpha2 of country. These functions will be used to build the database.
 The functions are:
+
 	get_GPS_of_country(Alpha2)
 	get_GDP_of_country(Alpha2)
 	get_GDP_growth_of_country(Alpha2)
 	get_GNI_of_country(Alpha2)
 	
 [Part 2]
+
 Define functions to build the SQL database that read data from CSV and JSON into a new database called world_bank.db
 The functions are:
+
 	create_db()
 	populate_db()
 
 [Part 3]
 
+Define functions that can create different charts by using Plotly.
+
+	get_data_for_one(alpha2, title)
+	plot_for_one(result_dic)
+	get_data_for_all(title, year)
+	plot_for_all(result_dic)
+
 [Part 4]
+
+Define a function perform web scraping from the Financial Times website.
+
+	get_FTimes_page(Alpha2)
 
 [Part 5]
 
+Define a function for make requests from flicker API.
+
+	get_flickr_data(Alpha2, tag_for_search = 'National flag')
+	get_flickr_photo_info(id_num, tag)
+
 [Part 6]
+
+Implement logic to process user commands and define the function for running the main commands.
+
+	command_econ()
+	command_ft()
+	command_flicker()
 
 [Part 7]
   
+Implement interactive prompt. The function for user to decide which command runs according to the user input.
+
+	interactive_prompt()
+
+
   
   
