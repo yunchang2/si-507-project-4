@@ -82,17 +82,32 @@ Command available for all layers:
 [exit]
 	Description: Leave the program.
 
-
-
-
-
-
-
-
-
-
-
-
   
 #[How the function is constructed]#############################
+ 
+[Part 1]
+I built four functions to get data according to the Alpha2 of country. These functions will be used to build the database.
+The functions are:
+	get_GPS_of_country(Alpha2)
+	get_GDP_of_country(Alpha2)
+	get_GDP_growth_of_country(Alpha2)
+	get_GNI_of_country(Alpha2)
+	
+[Part 2]
+Define functions to build the SQL database that read data from CSV and JSON into a new database called world_bank.db
+The functions are:
+	create_db()
+	populate_db()
+
+[Part 3]
+
+[Part 4]
+
+[Part 5]
+
+[Part 6]
+
+[Part 7]
+  
+  
   
