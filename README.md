@@ -29,39 +29,70 @@ You also can use some command to get extra supports.(such as "help" or "exit")
 The explanation of the commands are following:
 
 Commands available for specific layers:
-[Home] --------------------
-[a] -->	[Economic charts]
-    	Description: Search for Economic Data of countries from the World Bank database.
-     	Options:
-	       [a] *** Line chart
-         	<Description>: Get a line chart of a country's GDP/GNI/GDP_growth from 1995 to 2015.
-	        <User Input>: a 2-letter country code, data type (GDP/GNI/GDP_growth)
 
-       	[b] *** World map
-       	<Description>: Get the world map of GDP/GNI of all countries at a specific year.
-	       <User Input>: data type (GDP/GNI/GDP_growth), a 4 digit year (between 1995 to 2015)
+[Home] --------------------
+
+[a] -->	[Economic charts]
+
+	Description: Search for Economic Data of countries from the World Bank database.
+
+	Options:
+
+	[a] *** Line chart
+	<Description>: Get a line chart of a country's GDP/GNI/GDP_growth from 1995 to 2015.
+	<User Input>: a 2-letter country code, data type (GDP/GNI/GDP_growth)
+
+
+	[b] *** World map
+	<Description>: Get the world map of GDP/GNI of all countries at a specific year.
+	<User Input>: data type (GDP/GNI/GDP_growth), a 4 digit year (between 1995 to 2015)
+
 
 [b] -->	[Financial times news search]
-	  <Description>: You can search for latest ten news in FTimes website regarding to 
-  	the country you want to look for.
-  	<User Input>: a 2-letter country code
+
+	<Description>: You can search for latest ten news in FTimes website regarding to 
+	the country you want to look for.
+	
+	<User Input>: a 2-letter country code
+
 
 [c] -->	[Flicker Photo search]
-  	Description: You can search for ten photos of a country that have a tag 
-  	you want.
-  	<User Input>: a 2-letter country code, a tag for the photo
+
+	Description: You can search for ten photos of a country that have a tag 
+	you want.
+
+	<User Input>: a 2-letter country code, a tag for the photo
+
 ---------------------------------------------------
+
 Command available for all layers: 
+
 [code]
 	Description: Open a website that listing all countries names and their 2-letter 
 	Alpha2 code. This allows user to find the 2-letter country code of a specific 
 	country.
+
+
 [Help]
 	Description: Open the help.txt to see the description of the program
+
 [back]	
 	Description: Go back to home layer.
+
 [exit]
 	Description: Leave the program.
+
+
+
+
+
+
+
+
+
+
+
+
   
 #[How the function is constructed]#############################
   
