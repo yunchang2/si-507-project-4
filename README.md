@@ -72,6 +72,7 @@ Command available for all layers:
 	Description: Open a website that listing all countries names and their 2-letter 
 	Alpha2 code. This allows user to find the 2-letter country code of a specific 
 	country.
+	https://www.worldatlas.com/aatlas/ctycodes.htm
 
 
 [Help]
