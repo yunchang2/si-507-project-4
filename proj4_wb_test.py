@@ -70,55 +70,34 @@ class TestDatabase(unittest.TestCase):
         self.assertEqual(result_list[0], 1538707417435.78)
         conn.close()
 
-# class TestBarSearch(unittest.TestCase):
-#
-#     def test_bar_search(self):
-#         results = process_command('bars ratings top=1')
-#         self.assertEqual(results[0][0], 'Chuao')
-#
-#         results = process_command('bars cocoa bottom=10')
-#         self.assertEqual(results[0][0], 'Guadeloupe')
-#
-#         results = process_command('bars sellcountry=CA ratings top=5')
-#         self.assertEqual(results[0][3], 4.0)
-#
-#         results = process_command('bars sourceregion=Africa ratings top=5')
-#         self.assertEqual(results[0][3], 4.0)
+class Get_Data_Search_one(unittest.TestCase):
 
-# class TestCompanySearch(unittest.TestCase):
-#
-#     def test_company_search(self):
-#         results = process_command('companies region=Europe ratings top=5')
-#         self.assertEqual(results[1][0], 'Idilio (Felchlin)')
-#
-#         results = process_command('companies country=US bars_sold top=5')
-#         self.assertTrue(results[0][0] == 'Fresco' and results[0][2] == 26)
-#
-#         results = process_command('companies cocoa top=5')
-#         self.assertEqual(results[0][0], 'Videri')
-#         self.assertGreater(results[0][2], 0.79)
-#
-# class TestCountrySearch(unittest.TestCase):
-#
-#     def test_country_search(self):
-#         results = process_command('countries sources ratings bottom=5')
-#         self.assertEqual(results[1][0],'Uganda')
-#
-#         results = process_command('countries sellers bars_sold top=5')
-#         self.assertEqual(results[0][2], 764)
-#         self.assertEqual(results[1][0], 'France')
-#
-# class TestRegionSearch(unittest.TestCase):
-#
-#     def test_region_search(self):
-#         results = process_command('regions sources bars_sold top=5')
-#         self.assertEqual(results[0][0], 'Americas')
-#         self.assertEqual(results[3][1], 66)
-#         self.assertEqual(len(results), 4)
-#
-#         results = process_command('regions sellers ratings top=10')
-#         self.assertEqual(len(results), 5)
-#         self.assertEqual(results[0][0], 'Oceania')
-#         self.assertGreater(results[3][1], 3.0)
+    def test_get_data_for_one(self):
+        results = get_data_for_one('CA','GDP')
+        self.assertEqual(results['Name'], 'Canada')
+
+        results = get_data_for_one('LY','gdp_growth')
+        self.assertEqual(results['title'], 'gdp_growth')
+
+        results = get_data_for_one('TW','GNI')
+        self.assertEqual(results['value'], [])
+
+
+        results = get_data_for_one('TR','GDP')
+        self.assertEqual(results['value'][0][0], 1995)
+
+class Get_Data_Search_all(unittest.TestCase):
+    def test_get_data_for_all(self):
+        results = get_data_for_all('GDP' , 2011)
+        self.assertEqual(results['title'], 'GDP')
+
+        results = get_data_for_all('GNI' , 1995)
+        self.assertTrue(results['year'],  1995)
+
+        results = get_data_for_all('GDP' , 2014)
+        self.assertEqual(len(results['value'][0][3]), 3)
+
+        results = get_data_for_all('GNI' , 1999)
+        self.assertLessEqual(len(results['value']), 250)
 
 unittest.main()

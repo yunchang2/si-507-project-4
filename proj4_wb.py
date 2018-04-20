@@ -342,6 +342,7 @@ def populate_db():
 def get_data_for_one(alpha2, title):
     # params: country code 'Alpha2' and the 'title' of data
     # return: result_dic
+    C_Name = None
     result_dic = {}
     result_lst = [] # store the result (Year, Value)
     conn = sqlite3.connect(DBNAME)
