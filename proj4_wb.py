@@ -991,7 +991,12 @@ if __name__=="__main__":
         interactive_prompt()
 
     elif user_input == 'No':
-        interactive_prompt()
+        try:
+            interactive_prompt()
+        except:
+            print('<<Please build a new database!>>')
+            print('<<Please enter this program again!>>')
+
 
     else:
         print('<<Invalid input. Please enter the correct command.>>')
