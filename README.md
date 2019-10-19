@@ -1,3 +1,8 @@
+# Notice at 10/19/2019
+1. Google map API is not free for use now, this project will revise to use mapbox API soon.
+2. Plotly function in this project is obselete now, and this project will be revised to new one soon. 
+
+
 # si-507-project-4
 Final project for SI 507
 
